@@ -32,21 +32,40 @@ node_templates:
           inputs:
             sla:  { get_input: sla }
 
+  matched_environment:
 
-  bluprint_deployer:
-
-    type: cloudify.nodes.ServiceComponent
+    type: cloudify.nodes.Component
     properties:
+      client:
+        host: { get_attribute: [ submanager, capabilities, cloudify_manager_endpoint ] }
+        username: admin
+        password: admin
+        tenant: default_tenant
+        port: 80
+        protocol: 'http'
       resource_config:
         blueprint:
-          id: { get_input: blueprint_id }
-        deployment:
-          inputs: 
-            environment_id:  { get_attribute: [ sla_matcher, DEPLOY_ID ] }
-
-    relationships:
+          main_file_name: 'nginx_deploy_on.yaml'
+          external_resource: false
+          blueprint_archive: https://github.com/mateuszmizer/poc_dish/raw/main/policy.zip
+      relationships:
       - type: cloudify.relationships.depends_on
         target: sla_matcher
+
+  # bluprint_deployer:
+
+  #   type: cloudify.nodes.ServiceComponent
+  #   properties:
+  #     resource_config:
+  #       blueprint:
+  #         id: { get_input: blueprint_id }
+  #       deployment:
+  #         inputs: 
+  #           environment_id:  { get_attribute: [ sla_matcher, DEPLOY_ID ] }
+
+  #   relationships:
+  #     - type: cloudify.relationships.depends_on
+  #       target: sla_matcher
 
 
 capabilities:

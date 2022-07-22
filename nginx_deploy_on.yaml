@@ -4,17 +4,6 @@ imports:
   - https://cloudify.co/spec/cloudify/6.3.0/types.yaml
   - plugin:cloudify-kubernetes-plugin?version===2.13.9
 
-inputs:
-  
-  environment_id:
-    type: string
-    default: c4a5ee45-2ed5-404a-b016-a05419e0f335
-
-
-labels:
-  csys-obj-parent:
-    values:
-      - { get_input: environment_id }
 
 node_templates:
 
@@ -22,7 +11,7 @@ node_templates:
     type: cloudify.kubernetes.nodes.Master
     properties:
       configuration:
-        file_content: { get_secret: { concat:[kubeconfig__, { get_input: environment_id }] } }
+        file_content: { get_secret: kubeconfig }
 
   nginx_pod:
     type: cloudify.kubernetes.resources.Pod
