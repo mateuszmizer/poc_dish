@@ -1,0 +1,55 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - https://cloudify.co/spec/cloudify/6.3.0/types.yaml
+  - plugin:cloudify-kubernetes-plugin?version===2.13.9
+
+inputs:
+
+  blueprint_id:
+    type: string
+    default: nginx_deploy_on
+   
+  sla:
+    description: Value of SLA
+    type: string
+    default: SLA1
+    constraints:
+    - valid_values:
+      - SLA1
+      - SLA2
+      - SLA3 
+
+node_templates:
+  
+  sla_matcher:
+    type: cloudify.nodes.Root
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        start:
+          implementation: scripts/sla_matcher.py
+          executor: central_deployment_agent
+          inputs:
+            sla:  { get_input: sla }
+
+
+  bluprint_deployer:
+
+    type: cloudify.nodes.ServiceComponent
+    properties:
+      resource_config:
+        blueprint:
+          id: { get_input: blueprint_id }
+        deployment:
+          inputs: 
+            environment_id:  { get_attribute: [ sla_matcher, DEPLOY_ID ] }
+
+    relationships:
+      - type: cloudify.relationships.depends_on
+        target: sla_matcher
+
+
+capabilities:
+
+  SLA_DEPLOYMENT_ID:
+    value: { get_attribute: [ sla_matcher, DEPLOY_ID ] }
