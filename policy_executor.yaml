@@ -64,7 +64,7 @@ node_templates:
     type: cloudify.nodes.Component
     properties:
       client:
-        host: { get_environment_capability: cloudify_manager_endpoint }
+        host: { get_attribute: [ submanager, capabilities, cloudify_manager_endpoint ] }
         username: admin
         password: admin
         tenant: default_tenant
@@ -89,4 +89,4 @@ node_templates:
 
 capabilities:
   SLA:
-    value: value: { get_attribute: [ infrastructure,  SLA_POLICY ] }
+    value: { get_attribute: [ infrastructure,  SLA_POLICY ] }
