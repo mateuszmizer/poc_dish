@@ -6,9 +6,13 @@ imports:
 
 inputs:
 
-  blueprint_id:
+  main_file_name:
     type: string
-    default: nginx_deploy_on
+    default: nginx_deploy_on.yaml
+  
+  blueprint_archive:
+    type: string
+    default: https://github.com/mateuszmizer/poc_dish/raw/main/nginx_pod.zip
    
   sla:
     description: Value of SLA
@@ -32,6 +36,16 @@ node_templates:
           inputs:
             sla:  { get_input: sla }
 
+  submanager:
+    type: cloudify.nodes.SharedResource
+    properties:
+      resource_config:
+        deployment:
+          id: { get_attribute: [ sla_matcher, DEPLOY_ID ] }
+    relationships:
+    - type: cloudify.relationships.depends_on
+      target: sla_matcher
+
   matched_environment:
 
     type: cloudify.nodes.Component
@@ -45,28 +59,12 @@ node_templates:
         protocol: 'http'
       resource_config:
         blueprint:
-          main_file_name: 'nginx_deploy_on.yaml'
+          main_file_name: { get_input: main_file_name }
           external_resource: false
-          blueprint_archive: https://github.com/mateuszmizer/poc_dish/raw/main/policy.zip
-      relationships:
-      - type: cloudify.relationships.depends_on
-        target: sla_matcher
-
-  # bluprint_deployer:
-
-  #   type: cloudify.nodes.ServiceComponent
-  #   properties:
-  #     resource_config:
-  #       blueprint:
-  #         id: { get_input: blueprint_id }
-  #       deployment:
-  #         inputs: 
-  #           environment_id:  { get_attribute: [ sla_matcher, DEPLOY_ID ] }
-
-  #   relationships:
-  #     - type: cloudify.relationships.depends_on
-  #       target: sla_matcher
-
+          blueprint_archive: { get_input: blueprint_archive }
+    relationships:
+    - type: cloudify.relationships.depends_on
+      target: submanager
 
 capabilities:
 
