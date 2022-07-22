@@ -41,5 +41,5 @@ class Labeler:
 
 if __name__=='__main__':
     deployment_id = inputs.get('deployment_id')
-    sla_labels = inputs.get('labels')
-    Labeler.update_deployment_labels(deployment_id=deployment_id, labels=sla_labels
+    sla_labels = [inputs.get('SLA_VALUE')]
+    Labeler().update_deployment_labels(deployment_id=deployment_id, labels=sla_labels)

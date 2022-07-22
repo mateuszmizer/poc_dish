@@ -149,6 +149,5 @@ if __name__=='__main__':
         sla_values += [k for k in sla_value if k not in sla_values]
         for i, l in enumerate(sla_value):
             ctx.instance.runtime_properties[f"{k['metadata']['name']}{i}"] = l
-    for s in sla_values:
-        ctx.instance.runtime_properties["SLA_POLICY"] = s
+    ctx.instance.runtime_properties["SLA_POLICY"] = sla_values[-1]
     # policy_matcher.update_deployment_labels(deployment_id=deployment_id, labels=[{'SLA_POLICY': s} for s in sla_values])

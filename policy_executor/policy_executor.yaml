@@ -7,7 +7,7 @@ inputs:
 
   submanager_deployment_id:
     type: string
-    default: 483032d2-bf86-437f-8bb8-7f6f58f3ab0a
+    default: eb830ef6-a996-4b41-ac07-125996e4983b
 
 
 deployment_settings:
@@ -39,28 +39,7 @@ node_templates:
     - type: cloudify.relationships.depends_on
       target: submanager
 
-  # policy_temp:
-  
-  #   type: cloudify.nodes.Root
-  #   interfaces:
-  #     cloudify.interfaces.lifecycle:
-  #       start:
-  #         implementation: scripts/policy.py
-  #         executor: central_deployment_agent
-  #         inputs:
-  #           cluster_host: { get_attribute: [ k8s, capabilities, kubernetes_cluster_host ] }
-  #           cluster_name: { get_attribute: [ k8s, capabilities, kubernetes_cluster_name ] }
-  #           region: { get_attribute: [ k8s, capabilities, region ] }
-  #           rg_id: { get_attribute: [ k8s, capabilities, rg_id ] }
-  #           aks_id: { get_attribute: [ k8s, capabilities, aks_id ] }
-  #           kube_config: { get_secret: kubeconfig }
-  #           deployment_id: { get_input: submanager_deployment_id }
-  #   relationships:
-  #   - type: cloudify.relationships.depends_on
-  #     target: k8s
-
-# node_templates:
-  infrastructure:
+  policy_matcher:
     type: cloudify.nodes.Component
     properties:
       client:
@@ -86,7 +65,21 @@ node_templates:
     relationships:
     - type: cloudify.relationships.depends_on
       target: k8s
+  
+  labeler:
+    type: cloudify.nodes.Root
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        start:
+          implementation: scripts/labeler.py
+          executor: central_deployment_agent
+          inputs:
+            deployment_id:
+            SLA_VALUE: { get_attribute: [ policy_matcher:,  SLA_POLICY ] }
+    relationships:
+    - type: cloudify.relationships.depends_on
+      target: policy_matcher
 
 capabilities:
   SLA:
-    value: { get_attribute: [ infrastructure,  SLA_POLICY ] }
+    value: { get_attribute: [ policy_matcher,  SLA_POLICY ] }
