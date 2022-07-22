@@ -26,7 +26,6 @@ inputs:
 node_templates:
 
   policy_temp:
-
     type: cloudify.nodes.Root
     interfaces:
       cloudify.interfaces.lifecycle:
@@ -41,9 +40,6 @@ node_templates:
             aks_id: { get_input: aks_id }
             kube_config: { get_input: kube_config }
             # deployment_id: { get_input: submanager_deployment_id }
-    relationships:
-    - type: cloudify.relationships.depends_on
-      target: k8s
 
 capabilities:
   SLA_POLICY:
