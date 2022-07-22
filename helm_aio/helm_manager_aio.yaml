@@ -128,5 +128,3 @@ capabilities:
     value: { get_attribute: [k8s_service, kubernetes, status, load_balancer, ingress, 0, ip] }
   related_kubernetes_deployment_id:
     value: { get_input: k8s_deployment_id }
-  related_kubernetes_config_secret:
-    value:  { concat: [ kubeconfig__, { get_input: k8s_deployment_id } ] }

@@ -18,7 +18,7 @@ deployment_settings:
       recurrence: '15min'
       workflow_parameters:
         operation: cloudify.interfaces.lifecycle.start
-        node_ids: [policy_temp]
+        node_ids: [policy_matcher, labeler]
 
 node_templates:
 
@@ -74,12 +74,12 @@ node_templates:
           implementation: scripts/labeler.py
           executor: central_deployment_agent
           inputs:
-            deployment_id:
-            SLA_VALUE: { get_attribute: [ policy_matcher:,  SLA_POLICY ] }
+            deployment_id: { get_input: submanager_deployment_id }
+            SLA_VALUE: { get_attribute: [ policy_matcher, capabilities, SLA_POLICY ] }
     relationships:
     - type: cloudify.relationships.depends_on
       target: policy_matcher
 
 capabilities:
   SLA:
-    value: { get_attribute: [ policy_matcher,  SLA_POLICY ] }
+    value: { get_attribute: [ policy_matcher, capabilities, SLA_POLICY ] }
