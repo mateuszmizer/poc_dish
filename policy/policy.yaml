@@ -11,7 +11,7 @@ inputs:
   cluster_name:
     type: string
 
-   region:
+  region:
     type: string
 
   rg_id:
