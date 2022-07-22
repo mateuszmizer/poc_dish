@@ -139,7 +139,7 @@ def _get_api_manager():
 
 if __name__=='__main__':
     sla_values = []
-    deployment_id = inputs.get('deployment_id')
+    # deployment_id = inputs.get('deployment_id')
     k8smanager = _get_api_manager()
     policy_matcher = PolicySLAMatcher()
     data = k8smanager.get_nodes_labels()
@@ -149,4 +149,4 @@ if __name__=='__main__':
         sla_values += [k for k in sla_value if k not in sla_values]
         for i, l in enumerate(sla_value):
             ctx.instance.runtime_properties[f"{k['metadata']['name']}{i}"] = l
-    policy_matcher.update_deployment_labels(deployment_id=deployment_id, labels=[{'SLA_POLICY': s} for s in sla_values])
+    # policy_matcher.update_deployment_labels(deployment_id=deployment_id, labels=[{'SLA_POLICY': s} for s in sla_values])
