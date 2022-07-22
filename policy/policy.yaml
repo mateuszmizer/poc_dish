@@ -19,9 +19,6 @@ inputs:
   
   aks_id:
     type: string
-  
-  kube_config:
-    type: string
 
 node_templates:
 
@@ -38,7 +35,7 @@ node_templates:
             region: { get_input: region }
             rg_id: { get_input: rg_id }
             aks_id: { get_input: aks_id }
-            kube_config: { get_input: kube_config }
+            kube_config: { get_secret: kubeconfig }
             # deployment_id: { get_input: submanager_deployment_id }
 
 capabilities:
