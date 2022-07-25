@@ -17,10 +17,6 @@ inputs:
   nfd_blueprint_id:
     type: string
     default: nfd-blueprint
-  
-  kube_cert_blueprint_id:
-    type: string
-    default: k8s_cert_configuration_new
 
 node_templates:
   
