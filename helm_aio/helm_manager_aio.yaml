@@ -2,7 +2,7 @@ tosca_definitions_version: cloudify_dsl_1_3
 imports:
   - https://cloudify.co/spec/cloudify/6.2.0/types.yaml
   - plugin:cloudify-kubernetes-plugin?version= >=2.13.0
-  - plugin:cloudify-helm-plugin
+  - plugin:cloudify-helm-plugin?version===0.2.6
 blueprint_labels:
   csys-obj-type:
     values:
@@ -45,6 +45,7 @@ inputs:
     default: 'ca-central-1'
     
 node_templates:
+
   kubernetes_deployment:
     type: cloudify.kubernetes.nodes.Master
     properties:
@@ -56,6 +57,10 @@ node_templates:
     properties:
       use_existing_resource: false
       installation_source: { get_input: helm_installation_source }
+    relationships:
+      - target: kubernetes_deployment
+        type: cloudify.relationships.depends_on
+
   repo:
     type: cloudify.nodes.helm.Repo
     properties:
@@ -65,6 +70,7 @@ node_templates:
     relationships:
       - target: helm_install
         type: cloudify.helm.relationships.run_on_host
+  
   release:
     type: cloudify.nodes.helm.Release
     properties:
@@ -86,8 +92,9 @@ node_templates:
         type: cloudify.helm.relationships.run_on_host
       - target: repo
         type: cloudify.relationships.depends_on
-      - type: cloudify.relationships.kubernetes.connected_to_shared_cluster
-        target: kubernetes_deployment
+      - target: kubernetes_deployment
+        type: cloudify.relationships.kubernetes.connected_to_shared_cluster
+        
   k8s_service:
     type: cloudify.kubernetes.resources.Service
     properties:
@@ -104,6 +111,20 @@ node_templates:
     relationships:
       - target: release
         type: cloudify.relationships.depends_on
+
+  host_address_generator:
+    type: cloudify.nodes.Root
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        start:
+          implementation: scripts/host_ip_generator.py
+          executor: central_deployment_agent
+          inputs:
+            INGRESS: { get_attribute: [k8s_service, kubernetes, status, load_balancer, ingress, 0] }
+    relationships:
+      - target: k8s_service
+        type: cloudify.relationships.depends_on
+
   licence:
     type: cloudify.nodes.Root
     interfaces:
@@ -113,18 +134,18 @@ node_templates:
           inputs:
             process:
               env:
-                IP: { get_attribute: [k8s_service, kubernetes, status, load_balancer, ingress, 0, ip] }
+                IP: { get_attribute: [host_address_generator, HOST_ADDR] }
                 ADMIN_PASSWORD: admin
                 AWS_ACCESS_KEY_ID: { get_secret: aws_access_key_id }
                 AWS_SECRET_ACCESS_KEY: { get_secret: aws_secret_access_key }
                 KUBECONFIG: { get_secret: { concat:[kubeconfig__, { get_input: k8s_deployment_id }] } }
           executor: central_deployment_agent
     relationships:
-      - target: k8s_service
+      - target: host_address_generator
         type: cloudify.relationships.depends_on
 
 capabilities:
   cloudify_manager_endpoint:
-    value: { get_attribute: [k8s_service, kubernetes, status, load_balancer, ingress, 0, ip] }
+    value: { get_attribute: [host_address_generator, HOST_ADDR] }
   related_kubernetes_deployment_id:
     value: { get_input: k8s_deployment_id }
