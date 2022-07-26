@@ -8,7 +8,10 @@ inputs:
   submanager_deployment_id:
     type: string
     default: eb830ef6-a996-4b41-ac07-125996e4983b
-
+  
+  default_region_name:
+    type: string
+    default: 'us-west-1'
 
 deployment_settings:
   default_schedules:
@@ -39,6 +42,28 @@ node_templates:
     - type: cloudify.relationships.depends_on
       target: submanager
 
+  aws_cli_installator:
+    type: cloudify.nodes.Component
+    properties:
+      client:
+        host: { get_attribute: [ submanager, capabilities, cloudify_manager_endpoint ] }
+        username: admin
+        password: admin
+        tenant: default_tenant
+        port: 80
+        protocol: 'http'
+      resource_config:
+        blueprint:
+          main_file_name: 'aws_cli.yaml'
+          external_resource: false
+          blueprint_archive: https://github.com/mateuszmizer/poc_dish/raw/main/aws_cli_installator.zip
+        deployment:
+          inputs:
+            default_region_name: { get_input: default_region_name }
+    relationships:
+    - type: cloudify.relationships.depends_on
+      target: k8s
+
   policy_matcher:
     type: cloudify.nodes.Component
     properties:
@@ -64,7 +89,7 @@ node_templates:
             # deployment_id: { get_input: submanager_deployment_id }
     relationships:
     - type: cloudify.relationships.depends_on
-      target: k8s
+      target: aws_cli_installator
   
   labeler:
     type: cloudify.nodes.Root
