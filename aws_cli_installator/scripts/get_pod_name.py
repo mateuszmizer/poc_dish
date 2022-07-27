@@ -1,17 +1,11 @@
 #!/usr/bin/env python
 
-from this import s
-import requests
-import json
 import logging
-import yaml
 
-from cloudify import manager, ctx
+
+from cloudify import ctx
 from cloudify.state import ctx_parameters as inputs
 from cloudify import utils as cloudify_utils
-from cloudify_rest_client.client import CloudifyClient
-from cloudify_rest_client.exceptions import CloudifyClientError
-from cloudify.exceptions import NonRecoverableError
 
 ctx_logger = cloudify_utils.setup_logger('cloudify-agent.tests.installer.script', logger_level=logging.DEBUG)
 manager_name = 'cloudify-manager-aio'
@@ -23,12 +17,12 @@ class Manager:
 
     @property
     def pod_name(self):
-        cmd = "kubectl get pods -A |grep " + manager_name + "|awk '{print $2}'"
+        cmd = "kubectl get pods --all-namespaces | grep " + manager_name + "|awk '{print $2}'"
         return self.runner.run(cmd).stdout
 
     @property
     def namespace(self):
-        cmd = "kubectl get pods -A |grep " + manager_name + "|awk '{print $1}'"
+        cmd = "kubectl get pods --all-namespaces | grep " + manager_name + "|awk '{print $1}'"
         return self.runner.run(cmd).stdout
 
 
@@ -44,8 +38,7 @@ class AwsEksManager(Manager):
             work only for AWS EKS
             aws eks update-kubeconfig --region {} --name {}
         """
-        
-        response = self.runner.run(self._cmd)
+        self.runner.run(self._cmd)
 
 
 class AzureAksManager(Manager):
@@ -76,7 +69,6 @@ def _get_api_manager():
     return k8smanager
 
 
-
 if __name__=='__main__':
     sla_values = []
     # deployment_id = inputs.get('deployment_id')
@@ -84,5 +76,4 @@ if __name__=='__main__':
     k8smanager.set_as_k8s_context()
     ctx.instance.runtime_properties["POD_NAME"] = k8smanager.pod_name
     ctx.instance.runtime_properties["NAMESPACE"] = k8smanager.namespace
-
-
+    
