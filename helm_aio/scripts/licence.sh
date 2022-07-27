@@ -1,5 +1,5 @@
 cfy profile delete ${IP} || true
-ctx logger info "installing cfy licence"
+ctx logger info "installing cfy licence for ${IP}"
 ### This line is required to set the profile
 ctx logger info "Setting Cloudify CLI"
 #export CLOUDIFY_SSL_TRUST_ALL=true
