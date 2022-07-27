@@ -1,3 +1,4 @@
+#!/bin/bash
 ctx logger info "set aws creds"
 export POD_NAME=$(kubectl get pods --all-namespaces | grep "${MANAGER_NAME}"|awk '{print $2}')
 export NAMESPACE=$(kubectl get pods --all-namespaces | grep "${MANAGER_NAME}"|awk '{print $1}')

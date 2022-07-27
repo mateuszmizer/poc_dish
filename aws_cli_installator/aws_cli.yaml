@@ -48,12 +48,13 @@ node_templates:
           implementation: scripts/k8s_exec.sh
           inputs:
             process:
-              # POD_NAME: { get_attribute: [ pod_name, capabilities, POD_NAME ] }
-              # NAMESPACE: { get_attribute: [ pod_name, capabilities, NAMESPACE ] }
-              MANAGER_NAME: { get_input: manager_name}
-              AWS_ACCESS_KEY_ID: { get_secret: aws_access_key_id }
-              AWS_SECRET_ACCESS_KEY: { get_secret: aws_secret_access_key }
-              AWS_DEFAULT_REGION: { get_input: region }
+              env:
+                # POD_NAME: { get_attribute: [ pod_name, capabilities, POD_NAME ] }
+                # NAMESPACE: { get_attribute: [ pod_name, capabilities, NAMESPACE ] }
+                MANAGER_NAME: { get_input: manager_name}
+                AWS_ACCESS_KEY_ID: { get_secret: aws_access_key_id }
+                AWS_SECRET_ACCESS_KEY: { get_secret: aws_secret_access_key }
+                AWS_DEFAULT_REGION: { get_input: region }
           executor: central_deployment_agent
     relationships:
     - type: cloudify.relationships.depends_on

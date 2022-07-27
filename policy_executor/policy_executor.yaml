@@ -8,10 +8,6 @@ inputs:
   submanager_deployment_id:
     type: string
     default: eb830ef6-a996-4b41-ac07-125996e4983b
-  
-  default_region_name:
-    type: string
-    default: 'us-west-1'
 
 deployment_settings:
   default_schedules:
