@@ -45,13 +45,6 @@ node_templates:
   aws_cli_installator:
     type: cloudify.nodes.Component
     properties:
-      client:
-        host: { get_attribute: [ submanager, capabilities, cloudify_manager_endpoint ] }
-        username: admin
-        password: admin
-        tenant: default_tenant
-        port: 80
-        protocol: 'http'
       resource_config:
         blueprint:
           main_file_name: 'aws_cli.yaml'
@@ -59,7 +52,11 @@ node_templates:
           blueprint_archive: https://github.com/mateuszmizer/poc_dish/raw/main/aws_cli_installator.zip
         deployment:
           inputs:
-            default_region_name: { get_input: default_region_name }
+            cluster_host: { get_attribute: [ k8s, capabilities, kubernetes_cluster_host ] }
+            cluster_name: { get_attribute: [ k8s, capabilities, kubernetes_cluster_name ] }
+            region: { get_attribute: [ k8s, capabilities, region ] }
+            rg_id: { get_attribute: [ k8s, capabilities, rg_id ] }
+            aks_id: { get_attribute: [ k8s, capabilities, aks_id ] }
     relationships:
     - type: cloudify.relationships.depends_on
       target: k8s
