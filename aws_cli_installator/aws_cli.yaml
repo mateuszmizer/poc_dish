@@ -41,7 +41,7 @@ node_templates:
     interfaces:
       cloudify.interfaces.lifecycle:
         configure:
-          implementation: scripts/aws_cli_installer.sh
+          implementation: scripts/k8s_exec.sh
           inputs:
             process:
               POD_NAME: { get_attribute: [ pod_name, capabilities, POD_NAME ] }
