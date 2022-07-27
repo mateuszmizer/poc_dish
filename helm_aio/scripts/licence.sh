@@ -1,3 +1,4 @@
+#!/bin/bash
 cfy profile delete ${IP} || true
 ctx logger info "installing cfy licence for ${IP}"
 ### This line is required to set the profile
