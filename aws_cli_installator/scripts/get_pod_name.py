@@ -17,12 +17,12 @@ class Manager:
 
     @property
     def pod_name(self):
-        cmd = "kubectl get pods --all-namespaces | grep " + manager_name + "|awk '{print $2}'"
+        cmd = r"kubectl get pods --all-namespaces | grep " + manager_name + r"|awk '{print $2}'"
         return self.runner.run(cmd).stdout
 
     @property
     def namespace(self):
-        cmd = "kubectl get pods --all-namespaces | grep " + manager_name + "|awk '{print $1}'"
+        cmd = r"kubectl get pods --all-namespaces | grep " + manager_name + r"|awk '{print $1}'"
         return self.runner.run(cmd).stdout
 
 
@@ -74,6 +74,5 @@ if __name__=='__main__':
     # deployment_id = inputs.get('deployment_id')
     k8smanager = _get_api_manager()
     k8smanager.set_as_k8s_context()
-    ctx.instance.runtime_properties["POD_NAME"] = k8smanager.pod_name
-    ctx.instance.runtime_properties["NAMESPACE"] = k8smanager.namespace
-    
+    # ctx.instance.runtime_properties["POD_NAME"] = k8smanager.pod_name
+    # ctx.instance.runtime_properties["NAMESPACE"] = k8smanager.namespace
