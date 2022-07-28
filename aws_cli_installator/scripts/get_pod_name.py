@@ -15,15 +15,9 @@ class Manager:
 
     runner = cloudify_utils.LocalCommandRunner(ctx_logger)
 
-    @property
-    def pod_name(self):
-        cmd = r"kubectl get pods --all-namespaces | grep " + manager_name + r"|awk '{print $2}'"
-        return self.runner.run(cmd).stdout
+    def remove_old_context(self):
+        self.runner.run('rm -rf /etc/cloudify/.kube/config')
 
-    @property
-    def namespace(self):
-        cmd = r"kubectl get pods --all-namespaces | grep " + manager_name + r"|awk '{print $1}'"
-        return self.runner.run(cmd).stdout
 
 
 class AwsEksManager(Manager):
@@ -32,6 +26,7 @@ class AwsEksManager(Manager):
 
     def __init__(self, cluster_name: str, region: str):
         self._cmd = 'aws eks update-kubeconfig --region {} --name {}'.format(region, cluster_name)
+        self.remove_old_context()
             
     def set_as_k8s_context(self):
         """
@@ -47,6 +42,7 @@ class AzureAksManager(Manager):
 
     def __init__(self, rg_id: str, aks_id: str):
         self._cmd = 'az aks get-credentials --name {} -g {}'.format(aks_id, rg_id)
+        self.remove_old_context()
  
     def set_as_k8s_context(self):
         self.runner.run(self._cmd)

@@ -2,7 +2,7 @@ tosca_definitions_version: cloudify_dsl_1_3
 
 imports:
   - https://cloudify.co/spec/cloudify/6.3.0/types.yaml
-  - plugin:cloudify-kubernetes-plugin?version===2.13.9
+  - plugin:cloudify-kubernetes-plugin?version===2.13.13
 
 
 node_templates:
@@ -22,11 +22,11 @@ node_templates:
         metadata:
           name: nginx
         spec:
-          ports:
-          - port: 80
           containers:
-          - name: nginx
+          - name: nginxcontainer
             image: nginx
+            ports:
+            - containerPort: 80
             
     relationships:
       - type: cloudify.kubernetes.relationships.managed_by_master
