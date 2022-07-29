@@ -19,7 +19,6 @@ class Manager:
         self.runner.run('rm -rf /etc/cloudify/.kube/config')
 
 
-
 class AwsEksManager(Manager):
 
     """Class support AWS EKS API """
