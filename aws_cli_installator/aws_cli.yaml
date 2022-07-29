@@ -26,12 +26,12 @@ inputs:
     
 node_templates:
  
-  pod_name:
+  k8s_context_set:
     type: cloudify.nodes.Root
     interfaces:
       cloudify.interfaces.lifecycle:
         start:
-          implementation: scripts/get_pod_name.py
+          implementation: scripts/set_k8s_context.py
           executor: central_deployment_agent
           inputs:
             cluster_host: { get_input: cluster_host }
