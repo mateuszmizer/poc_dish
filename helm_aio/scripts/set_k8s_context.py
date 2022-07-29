@@ -21,7 +21,6 @@ class Manager:
 
 
 class AwsEksManager(Manager):
-
     """Class support AWS EKS API """
 
     def __init__(self, cluster_name: str, region: str):
@@ -37,7 +36,6 @@ class AwsEksManager(Manager):
 
 
 class AzureAksManager(Manager):
-
     """Class support Azure AKS API """
 
     def __init__(self, rg_id: str, aks_id: str):

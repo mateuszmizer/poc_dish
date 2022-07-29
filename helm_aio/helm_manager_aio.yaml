@@ -168,6 +168,7 @@ node_templates:
                 AWS_SECRET_ACCESS_KEY: { get_secret: aws_secret_access_key }
                 KUBECONFIG: { get_secret: { concat:[kubeconfig__, { get_input: k8s_deployment_id }] } }
                 MANAGER_NAME: { get_input: manager_name}
+                NAMESPACE: default
           executor: central_deployment_agent
     relationships:
       - target: host_address_generator
