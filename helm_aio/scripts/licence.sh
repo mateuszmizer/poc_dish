@@ -1,4 +1,9 @@
 #!/bin/bash
+ctx logger info "update size of deployment"
+kubectl patch deployment ${MANAGER_NAME} -p '{"spec": {"template": { "spec": {"volumes": [{"name": "runlock", "emptyDir":{"sizeLimit":"4Gi"}}]}}}}}'
+kubectl patch deployment ${MANAGER_NAME} -p '{"spec": {"template": { "spec": {"volumes": [{"name": "run", "emptyDir":{"sizeLimit":"4Gi"}}]}}}}}'
+ctx logger info "sleep for pod restart"
+sleep 300
 cfy profile delete ${IP} || true
 ctx logger info "installing cfy licence for ${IP}"
 ### This line is required to set the profile

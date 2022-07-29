@@ -1,9 +1,4 @@
 #!/bin/bash
-ctx logger info "update size of deployment"
-kubectl patch deployment ${MANAGER_NAME} -p '{"spec": {"template": { "spec": {"volumes": [{"name": "runlock", "emptyDir":{"sizeLimit":"4Gi"}}]}}}}}'
-kubectl patch deployment ${MANAGER_NAME} -p '{"spec": {"template": { "spec": {"volumes": [{"name": "run", "emptyDir":{"sizeLimit":"4Gi"}}]}}}}}'
-ctx logger info "sleep for pod restart"
-sleep 300
 ctx logger info "set aws creds"
 export POD_NAME=$(kubectl get pods --all-namespaces | grep "${MANAGER_NAME}"|awk '{print $2}')
 export NAMESPACE=$(kubectl get pods --all-namespaces | grep "${MANAGER_NAME}"|awk '{print $1}')
