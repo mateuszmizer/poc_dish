@@ -42,7 +42,11 @@ inputs:
     default: https://cloudify-cosmo.github.io/cloudify-helm
   region_name:
     type: string
-    default: 'ca-central-1'
+    default: 'eu-central-1'
+  
+  manager_name:
+    type: string
+    default: cloudify-manager-aio
     
 node_templates:
 
@@ -125,6 +129,20 @@ node_templates:
       - target: k8s_service
         type: cloudify.relationships.depends_on
 
+  k8s_context_set:
+    type: cloudify.nodes.Root
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        start:
+          implementation: scripts/set_k8s_context.py
+          executor: central_deployment_agent
+          inputs:
+            cluster_host: { get_attribute: [ kubernetes_deployment, capabilities, kubernetes_cluster_host ] }
+            cluster_name: { get_attribute: [ kubernetes_deployment, capabilities, kubernetes_cluster_name ] }
+            region: { get_attribute: [ kubernetes_deployment, capabilities, region ] }
+            rg_id: { get_attribute: [ kubernetes_deployment, capabilities, rg_id ] }
+            aks_id: { get_attribute: [ kubernetes_deployment, capabilities, aks_id ] }
+
   licence:
     type: cloudify.nodes.Root
     interfaces:
@@ -139,6 +157,7 @@ node_templates:
                 AWS_ACCESS_KEY_ID: { get_secret: aws_access_key_id }
                 AWS_SECRET_ACCESS_KEY: { get_secret: aws_secret_access_key }
                 KUBECONFIG: { get_secret: { concat:[kubeconfig__, { get_input: k8s_deployment_id }] } }
+                MANAGER_NAME: { get_input: manager_name}
           executor: central_deployment_agent
     relationships:
       - target: host_address_generator
