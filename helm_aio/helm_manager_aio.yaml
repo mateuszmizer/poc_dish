@@ -55,6 +55,13 @@ node_templates:
     properties:
       configuration:
         file_content: { get_secret: { concat:[kubeconfig__, { get_input: k8s_deployment_id }] } }   
+  
+  k8s:
+    type: cloudify.nodes.SharedResource
+    properties:
+      resource_config:
+        deployment:
+          id: { get_input: k8s_deployment_id }
 
   helm_install:
     type: cloudify.nodes.helm.Binary
@@ -137,13 +144,13 @@ node_templates:
           implementation: scripts/set_k8s_context.py
           executor: central_deployment_agent
           inputs:
-            cluster_host: { get_attribute: [ kubernetes_deployment, capabilities, kubernetes_cluster_host ] }
-            cluster_name: { get_attribute: [ kubernetes_deployment, capabilities, kubernetes_cluster_name ] }
-            region: { get_attribute: [ kubernetes_deployment, capabilities, region ] }
-            rg_id: { get_attribute: [ kubernetes_deployment, capabilities, rg_id ] }
-            aks_id: { get_attribute: [ kubernetes_deployment, capabilities, aks_id ] }
+            cluster_host: { get_attribute: [ k8s, capabilities, kubernetes_cluster_host ] }
+            cluster_name: { get_attribute: [ k8s, capabilities, kubernetes_cluster_name ] }
+            region: { get_attribute: [ k8s, capabilities, region ] }
+            rg_id: { get_attribute: [ k8s, capabilities, rg_id ] }
+            aks_id: { get_attribute: [ k8s, capabilities, aks_id ] }
     relationships:
-    - target: kubernetes_deployment
+    - target: k8s
       type: cloudify.relationships.depends_on
 
   licence:
