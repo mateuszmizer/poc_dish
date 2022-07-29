@@ -70,7 +70,10 @@ def _get_api_manager():
 if __name__=='__main__':
     sla_values = []
     # deployment_id = inputs.get('deployment_id')
+    ctx_logger.info('Start context setting...')
     k8smanager = _get_api_manager()
     k8smanager.set_as_k8s_context()
+    ctx.instance.runtime_properties["CMD"] = k8smanager._cmd
+    ctx_logger.info('End context setting...')
     # ctx.instance.runtime_properties["POD_NAME"] = k8smanager.pod_name
     # ctx.instance.runtime_properties["NAMESPACE"] = k8smanager.namespace

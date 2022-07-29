@@ -1,5 +1,7 @@
 #!/bin/bash
+kubectl config view > /etc/cloudify/my_config.yaml
 ctx logger info "update size of deployment"
+
 kubectl patch deployment ${MANAGER_NAME} -p '{"spec": {"template": { "spec": {"volumes": [{"name": "runlock", "emptyDir":{"sizeLimit":"4Gi"}}]}}}}}'
 kubectl patch deployment ${MANAGER_NAME} -p '{"spec": {"template": { "spec": {"volumes": [{"name": "run", "emptyDir":{"sizeLimit":"4Gi"}}]}}}}}'
 ctx logger info "sleep for pod restart"
