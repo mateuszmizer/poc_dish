@@ -142,6 +142,9 @@ node_templates:
             region: { get_attribute: [ kubernetes_deployment, capabilities, region ] }
             rg_id: { get_attribute: [ kubernetes_deployment, capabilities, rg_id ] }
             aks_id: { get_attribute: [ kubernetes_deployment, capabilities, aks_id ] }
+    relationships:
+    - target: kubernetes_deployment
+      type: cloudify.relationships.depends_on
 
   licence:
     type: cloudify.nodes.Root
@@ -161,6 +164,8 @@ node_templates:
           executor: central_deployment_agent
     relationships:
       - target: host_address_generator
+        type: cloudify.relationships.depends_on
+      - target: k8s_context_set
         type: cloudify.relationships.depends_on
 
 capabilities:
