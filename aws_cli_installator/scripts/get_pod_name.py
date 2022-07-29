@@ -55,13 +55,15 @@ def _get_api_manager():
         cluster_name = dict(inputs.get('cluster_name')).get('value')
         region = dict(inputs.get('region')).get('value')
         k8smanager = AwsEksManager(cluster_name=cluster_name,
-                                      region=region)
+                                   region=region)
+        ctx.instance.runtime_properties["ENV"] = 'AWS'
     elif 'azmk8s' in cluster_host.lower():
         ctx_logger.info('AZURE AKS part will be executed')
         rg_id = inputs.get('rg_id')
         aks_id = inputs.get('aks_id')
         k8smanager = AzureAksManager(rg_id=rg_id,
-                                        aks_id=aks_id)
+                                     aks_id=aks_id)
+        ctx.instance.runtime_properties["ENV"] = 'AZURE'
     return k8smanager
 
 

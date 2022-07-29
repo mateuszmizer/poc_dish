@@ -13,3 +13,10 @@ echo "configure aws"
 sudo -u cfyuser aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
 sudo -u cfyuser aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
 sudo -u cfyuser aws configure set default.region $AWS_DEFAULT_REGION
+if [[ "$ENV_TYPE" == "AWS" ]]; then
+    echo "AWS env...kubeconfig will be replaced..."
+    export KUBECONFIGLOCAL=$(aws eks update-kubeconfig --region eu-central-1 --name njivqd-eks --dry-run)
+    cfy secrets update kubeconfig -s """$KUBECONFIGLOCAL"""
+else
+    echo "AZURE ENV"
+fi
