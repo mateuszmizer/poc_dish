@@ -1,5 +1,5 @@
 #!/bin/bash
-ctx logger info "set aws creds for ${MANAGER_NAME_VALUE}"
+ctx logger info "set aws creds for ${MANAGER_NAME}"
 ctx logger info "ENV: ${ENV_TYPE_VALUE}"
 ctx logger info "CLUSTER: ${CLUSTER_VALUE}"
 export POD_NAME=$(kubectl get pods --all-namespaces --kubeconfig /etc/cloudify/.kube/config| grep "${MANAGER_NAME}"|awk '{print $2}')
