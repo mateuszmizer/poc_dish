@@ -1,7 +1,7 @@
 #!/bin/bash
 ctx logger info "set aws creds"
-export POD_NAME=$(kubectl get pods --all-namespaces | grep "${MANAGER_NAME}"|awk '{print $2}')
-export NAMESPACE=$(kubectl get pods --all-namespaces | grep "${MANAGER_NAME}"|awk '{print $1}')
+export POD_NAME=$(kubectl get pods --all-namespaces | grep "${MANAGER_NAME}"|awk '{print $2}' --kubeconfig /etc/cloudify/.kube/config)
+export NAMESPACE=$(kubectl get pods --all-namespaces | grep "${MANAGER_NAME}"|awk '{print $1}' --kubeconfig /etc/cloudify/.kube/config)
 kubectl exec -ti $POD_NAME -n $NAMESPACE -- /bin/bash -c "export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
 kubectl exec -ti $POD_NAME -n $NAMESPACE -- /bin/bash -c "export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
 kubectl exec -ti $POD_NAME -n $NAMESPACE -- /bin/bash -c "export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}"
