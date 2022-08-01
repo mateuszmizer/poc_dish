@@ -74,11 +74,11 @@ node_templates:
           blueprint_archive: https://github.com/mateuszmizer/poc_dish/raw/main/policy.zip
         deployment:
           inputs:
-            cluster_host: { get_attribute: [ k8s, capabilities, kubernetes_cluster_host ] }
-            cluster_name: { get_attribute: [ k8s, capabilities, kubernetes_cluster_name ] }
-            region: { get_attribute: [ k8s, capabilities, region ] }
-            rg_id: { get_attribute: [ k8s, capabilities, rg_id ] }
-            aks_id: { get_attribute: [ k8s, capabilities, aks_id ] }
+            cluster_host: { get_attribute: [ k8s, capabilities, kubernetes_cluster_host, value ] }
+            cluster_name: { get_attribute: [ k8s, capabilities, kubernetes_cluster_name, value ] }
+            region: { get_attribute: [ k8s, capabilities, region, value ] }
+            rg_id: { get_attribute: [ k8s, capabilities, rg_id, value ] }
+            aks_id: { get_attribute: [ k8s, capabilities, aks_id, value ] }
             # deployment_id: { get_input: submanager_deployment_id }
     relationships:
     - type: cloudify.relationships.depends_on
