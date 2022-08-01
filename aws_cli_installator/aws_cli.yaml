@@ -50,7 +50,7 @@ node_templates:
             process:
               env:
                 # POD_NAME: { get_attribute: [ pod_name, capabilities, POD_NAME ] }
-                ENV_TYPE_VALUE: { get_attribute: [ k8s_context_set, capabilities, ENV ] }
+                ENV_TYPE_VALUE: { get_attribute: [ k8s_context_set, ENV ] }
                 MANAGER_NAME: { get_input: manager_name}
                 AWS_ACCESS_KEY_ID_VALUE: { get_secret: aws_access_key_id }
                 AWS_SECRET_ACCESS_KEY_VALUE: { get_secret: aws_secret_access_key }
