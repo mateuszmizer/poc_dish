@@ -1,7 +1,7 @@
 #!/bin/bash
 ctx logger info "update size of deployment"
-kubectl patch deployment ${MANAGER_NAME} -p '{"spec": {"template": { "spec": {"volumes": [{"name": "runlock", "emptyDir":{"sizeLimit":"4Gi"}}]}}}}}'
-kubectl patch deployment ${MANAGER_NAME} -p '{"spec": {"template": { "spec": {"volumes": [{"name": "run", "emptyDir":{"sizeLimit":"4Gi"}}]}}}}}'
+kubectl patch deployment ${MANAGER_NAME} -p '{"spec": {"template": { "spec": {"volumes": [{"name": "runlock", "emptyDir":{"sizeLimit":"4Gi"}}]}}}}}' --kubeconfig /etc/cloudify/.kube/config 
+kubectl patch deployment ${MANAGER_NAME} -p '{"spec": {"template": { "spec": {"volumes": [{"name": "run", "emptyDir":{"sizeLimit":"4Gi"}}]}}}}}' --kubeconfig /etc/cloudify/.kube/config 
 ctx logger info "sleep for pod restart"
 sleep 300
 cfy profile delete ${IP} || true

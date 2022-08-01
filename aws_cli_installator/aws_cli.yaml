@@ -50,7 +50,7 @@ node_templates:
             process:
               env:
                 # POD_NAME: { get_attribute: [ pod_name, capabilities, POD_NAME ] }
-                ENV_TYPE: { get_attribute: [ pod_name, capabilities, ENV ] }
+                ENV_TYPE: { get_attribute: [ k8s_context_set, capabilities, ENV ] }
                 MANAGER_NAME: { get_input: manager_name}
                 AWS_ACCESS_KEY_ID: { get_secret: aws_access_key_id }
                 AWS_SECRET_ACCESS_KEY: { get_secret: aws_secret_access_key }
@@ -61,4 +61,4 @@ node_templates:
           executor: central_deployment_agent
     relationships:
     - type: cloudify.relationships.depends_on
-      target: pod_name
+      target: k8s_context_set
