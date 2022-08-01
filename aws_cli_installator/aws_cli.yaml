@@ -57,6 +57,7 @@ node_templates:
                 AWS_DEFAULT_REGION: { get_input: region }
                 AWS_CLUSTER_NAME: { get_input: cluster_name }
                 AWS_REGION: { get_input: region }
+                CLUSTER: { get_input: cluster_name }
                 
           executor: central_deployment_agent
     relationships:
