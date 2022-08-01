@@ -48,11 +48,11 @@ class AzureAksManager(Manager):
 
 
 def _get_api_manager():
-    cluster_host = dict(inputs.get('cluster_host')).get('value')
+    cluster_host = dict(inputs.get('cluster_host'))
     if 'amazonaws' in cluster_host.lower():
         ctx_logger.info('EKS part will be executed')
-        cluster_name = dict(inputs.get('cluster_name')).get('value')
-        region = dict(inputs.get('region')).get('value')
+        cluster_name = dict(inputs.get('cluster_name'))
+        region = dict(inputs.get('region'))
         k8smanager = AwsEksManager(cluster_name=cluster_name,
                                    region=region)
         ctx.instance.runtime_properties["ENV"] = 'AWS'
