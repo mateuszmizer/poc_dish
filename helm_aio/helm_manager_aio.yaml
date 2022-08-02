@@ -149,6 +149,8 @@ node_templates:
     relationships:
     - target: k8s
       type: cloudify.relationships.depends_on
+    - target: host_address_generator
+      type: cloudify.relationships.depends_on
 
   licence:
     type: cloudify.nodes.Root
@@ -171,8 +173,6 @@ node_templates:
                 REGION_VALUE: { get_attribute: [ k8s, capabilities, region, value ] }
           executor: central_deployment_agent
     relationships:
-      - target: host_address_generator
-        type: cloudify.relationships.depends_on
       - target: k8s_context_set
         type: cloudify.relationships.depends_on
 
