@@ -51,8 +51,8 @@ node_templates:
             cluster_host: { get_attribute: [ k8s, capabilities, kubernetes_cluster_host, value ] }
             cluster_name: { get_attribute: [ k8s, capabilities, kubernetes_cluster_name, value ] }
             region: { get_attribute: [ k8s, capabilities, region, value ] }
-            rg_id: { get_attribute: [ k8s, capabilities, rg_id, value ] }
-            aks_id: { get_attribute: [ k8s, capabilities, aks_id, value ] }
+            rg_id: { get_attribute: [ k8s, capabilities, rg_id ] }
+            aks_id: { get_attribute: [ k8s, capabilities, aks_id] }
     relationships:
     - type: cloudify.relationships.depends_on
       target: k8s
