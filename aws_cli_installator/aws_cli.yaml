@@ -22,7 +22,6 @@ inputs:
   manager_name:
     type: string
     default: cloudify-manager-aio
-
     
 node_templates:
  
