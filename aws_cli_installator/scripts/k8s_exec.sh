@@ -3,7 +3,7 @@ ctx logger info "set aws creds for ${MANAGER_NAME}"
 ctx logger info "ENV: ${ENV_TYPE_VALUE}"
 ctx logger info "CLUSTER: ${CLUSTER_VALUE}"
 POD_NAME=$(kubectl get pods --all-namespaces --kubeconfig /etc/cloudify/.kube/config| grep "${MANAGER_NAME}"|awk '{print $2}')
-echo $(kubectl get pods --all-namespaces --kubeconfig /etc/cloudify/.kube/config| grep "${MANAGER_NAME}"|awk '{print $2}') >> /etc/cloudify/my_log.log
+echo $POD_NAME >> /etc/cloudify/my_log.log
 NAMESPACE=$(kubectl get pods --all-namespaces --kubeconfig /etc/cloudify/.kube/config| grep "${MANAGER_NAME}"|awk '{print $1}')
 kubectl set env $POD_NAME -n $NAMESPACE --kubeconfig /etc/cloudify/.kube/config --overwrite=true AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID_VALUE}
 kubectl set env $POD_NAME -n $NAMESPACE --kubeconfig /etc/cloudify/.kube/config --overwrite=true AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY_VALUE}
