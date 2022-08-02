@@ -50,14 +50,14 @@ node_templates:
             process:
               env:
                 # POD_NAME: { get_attribute: [ pod_name, capabilities, POD_NAME ] }
-                ENV_TYPE_VALUE: { get_attribute: [ k8s_context_set, ENV ] }
+                # ENV_TYPE_VALUE: { get_attribute: [ k8s_context_set, ENV ] }
                 MANAGER_NAME: { get_input: manager_name}
-                AWS_ACCESS_KEY_ID_VALUE: { get_secret: aws_access_key_id }
-                AWS_SECRET_ACCESS_KEY_VALUE: { get_secret: aws_secret_access_key }
-                AWS_DEFAULT_REGION_VALUE: { get_input: region }
-                AWS_CLUSTER_NAME_VALUE: { get_input: cluster_name }
-                AWS_REGION_VALUE: { get_input: region }
-                CLUSTER_VALUE: { get_input: cluster_name }
+                # AWS_ACCESS_KEY_ID_VALUE: { get_secret: aws_access_key_id }
+                # AWS_SECRET_ACCESS_KEY_VALUE: { get_secret: aws_secret_access_key }
+                # AWS_DEFAULT_REGION_VALUE: { get_input: region }
+                # AWS_CLUSTER_NAME_VALUE: { get_input: cluster_name }
+                # AWS_REGION_VALUE: { get_input: region }
+                # CLUSTER_VALUE: { get_input: cluster_name }
                 
           executor: central_deployment_agent
     relationships:

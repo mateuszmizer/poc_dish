@@ -6,7 +6,7 @@ kubectl set env deployment/${MANAGER_NAME} -n $NAMESPACE --kubeconfig /etc/cloud
 kubectl set env deployment/${MANAGER_NAME} -n $NAMESPACE --kubeconfig /etc/cloudify/.kube/config --overwrite=true AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
 kubectl set env deployment/${MANAGER_NAME} -n $NAMESPACE --kubeconfig /etc/cloudify/.kube/config --overwrite=true AWS_DEFAULT_REGION=${REGION_VALUE}
 kubectl set env deployment/${MANAGER_NAME} -n $NAMESPACE --kubeconfig /etc/cloudify/.kube/config --overwrite=true ENV_TYPE=${ENV_TYPE_VALUE}
-kubectl set env deployment/${MANAGER_NAME} -n $NAMESPACE --kubeconfig /etc/cloudify/.kube/config --overwrite=true CLUSTER=${CLUSTER_VALUE}
+kubectl set env deployment/${MANAGER_NAME} -n $NAMESPACE --kubeconfig /etc/cloudify/.kube/config --overwrite=true CLUSTER=${CLUSTER_NAME_VALUE}
 ctx logger info "sleep for pod restart"
 sleep 300
 cfy profile delete ${IP} || true

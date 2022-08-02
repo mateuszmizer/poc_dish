@@ -43,10 +43,7 @@ inputs:
   region_name:
     type: string
     default: 'eu-central-1'
-  
-  manager_name:
-    type: string
-    default: cloudify-manager-aio
+
     
 node_templates:
 
@@ -167,7 +164,7 @@ node_templates:
                 AWS_ACCESS_KEY_ID: { get_secret: aws_access_key_id }
                 AWS_SECRET_ACCESS_KEY: { get_secret: aws_secret_access_key }
                 KUBECONFIG: { get_secret: { concat:[kubeconfig__, { get_input: k8s_deployment_id }] } }
-                MANAGER_NAME: { get_input: manager_name}
+                MANAGER_NAME: { get_input: chart_name}
                 NAMESPACE: default
                 ENV_TYPE_VALUE: { get_attribute: [ k8s_context_set, ENV ] }
                 CLUSTER_NAME_VALUE: { get_attribute: [ k8s, capabilities, kubernetes_cluster_name, value ] }
