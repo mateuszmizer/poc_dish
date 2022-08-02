@@ -169,6 +169,9 @@ node_templates:
                 KUBECONFIG: { get_secret: { concat:[kubeconfig__, { get_input: k8s_deployment_id }] } }
                 MANAGER_NAME: { get_input: manager_name}
                 NAMESPACE: default
+                ENV_TYPE_VALUE: { get_attribute: [ k8s_context_set, ENV ] }
+                CLUSTER_NAME_VALUE: { get_attribute: [ k8s, capabilities, kubernetes_cluster_name, value ] }
+                REGION_VALUE: { get_attribute: [ k8s, capabilities, region, value ] }
           executor: central_deployment_agent
     relationships:
       - target: host_address_generator
