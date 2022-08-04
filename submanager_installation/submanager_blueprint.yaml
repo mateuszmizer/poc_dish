@@ -182,24 +182,25 @@ node_templates:
       - target: k8s_service
         type: cloudify.relationships.depends_on
 
-  # k8s_context_set:
-  #   type: cloudify.nodes.Root
-  #   interfaces:
-  #     cloudify.interfaces.lifecycle:
-  #       start:
-  #         implementation: scripts/set_k8s_context.py
-  #         executor: central_deployment_agent
-  #         inputs:
-  #           cluster_host: { get_attribute: [ k8s, capabilities, kubernetes_cluster_host ] }
-  #           cluster_name: { get_attribute: [ k8s, capabilities, kubernetes_cluster_name ] }
-  #           region: { get_attribute: [ k8s, capabilities, region ] }
-  #           rg_id: { get_attribute: [ k8s, capabilities, rg_id ] }
-  #           aks_id: { get_attribute: [ k8s, capabilities, aks_id ] }
-  #   relationships:
-  #   - target: k8s
-  #     type: cloudify.relationships.depends_on
-  #   - target: host_address_generator
-  #     type: cloudify.relationships.depends_on
+  k8s_context_set:
+    type: cloudify.nodes.Root
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        start:
+          implementation: scripts/set_k8s_context.py
+          executor: central_deployment_agent
+          inputs:
+            cluster_host: { get_attribute: [ k8s, capabilities, kubernetes_cluster_host ] }
+            cluster_name: { get_attribute: [ k8s, capabilities, kubernetes_cluster_name ] }
+            region: { get_attribute: [ k8s, capabilities, region ] }
+            rg_id: { get_attribute: [ k8s, capabilities, rg_id ] }
+            aks_id: { get_attribute: [ k8s, capabilities, aks_id ] }
+            KUBECONFIG_PATH: { concat: [ /tmp/kubecfg, { get_sys: [deployment, id] } ] }
+    relationships:
+    - target: k8s
+      type: cloudify.relationships.depends_on
+    - target: host_address_generator
+      type: cloudify.relationships.depends_on
 
   licence:
     type: cloudify.nodes.Root
@@ -218,36 +219,36 @@ node_templates:
                 MANAGER_NAME: { get_input: chart_name}
                 NAMESPACE: default
                 KUBECONFIG_PATH: { concat: [ /tmp/kubecfg, { get_sys: [deployment, id] } ] }
-                ENV_TYPE_VALUE: { get_attribute: [ kubeconfig_storager, ENV ] }
+                ENV_TYPE_VALUE: { get_attribute: [ k8s_context_set, ENV ] }
                 CLUSTER_NAME_VALUE: { get_attribute: [ k8s, capabilities, kubernetes_cluster_name, value ] }
                 REGION_VALUE: { get_attribute: [ k8s, capabilities, region, value ] }
           executor: central_deployment_agent
     relationships:
       - target: host_address_generator
         type: cloudify.relationships.depends_on
-      # - target: k8s_context_set
-      #   type: cloudify.relationships.depends_on
+      - target: k8s_context_set
+        type: cloudify.relationships.depends_on
   
-  aws_cli_installator:
-    type: cloudify.nodes.Component
-    properties:
-      resource_config:
-        blueprint:
-          main_file_name: 'aws_cli.yaml'
-          external_resource: false
-          blueprint_archive: https://github.com/mateuszmizer/poc_dish/raw/main/aws_cli_installator.zip
-        deployment:
-          inputs:
-            cluster_host: { get_attribute: [ k8s, capabilities, kubernetes_cluster_host, value ] }
-            cluster_name: { get_attribute: [ k8s, capabilities, kubernetes_cluster_name, value ] }
-            region: { get_attribute: [ k8s, capabilities, region, value ] }
-            rg_id: { get_attribute: [ k8s, capabilities, rg_id ] }
-            aks_id: { get_attribute: [ k8s, capabilities, aks_id] }
-    relationships:
-    - type: cloudify.relationships.depends_on
-      target: k8s
-    - type: cloudify.relationships.depends_on
-      target: licence
+  # aws_cli_installator:
+  #   type: cloudify.nodes.Component
+  #   properties:
+  #     resource_config:
+  #       blueprint:
+  #         main_file_name: 'aws_cli.yaml'
+  #         external_resource: false
+  #         blueprint_archive: https://github.com/mateuszmizer/poc_dish/raw/main/aws_cli_installator.zip
+  #       deployment:
+  #         inputs:
+  #           cluster_host: { get_attribute: [ k8s, capabilities, kubernetes_cluster_host, value ] }
+  #           cluster_name: { get_attribute: [ k8s, capabilities, kubernetes_cluster_name, value ] }
+  #           region: { get_attribute: [ k8s, capabilities, region, value ] }
+  #           rg_id: { get_attribute: [ k8s, capabilities, rg_id ] }
+  #           aks_id: { get_attribute: [ k8s, capabilities, aks_id] }
+  #   relationships:
+  #   - type: cloudify.relationships.depends_on
+  #     target: k8s
+  #   - type: cloudify.relationships.depends_on
+  #     target: licence
 
   policy_matcher:
     type: cloudify.nodes.Component

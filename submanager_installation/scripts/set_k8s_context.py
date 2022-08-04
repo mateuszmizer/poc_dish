@@ -16,15 +16,16 @@ class Manager:
     runner = cloudify_utils.LocalCommandRunner(ctx_logger)
 
     def remove_old_context(self):
-        self.runner.run('rm -rf /etc/cloudify/.kube/config')
+        self.runner.run(f'rm -rf {self.file}')
 
 
 
 class AwsEksManager(Manager):
     """Class support AWS EKS API """
 
-    def __init__(self, cluster_name: str, region: str):
-        self._cmd = 'aws eks update-kubeconfig --region {} --name {}'.format(region, cluster_name)
+    def __init__(self, cluster_name: str, region: str, file: str):
+        self._cmd = 'aws eks update-kubeconfig --region {} --name {} --dry-run >> {}'.format(region, cluster_name, file)
+        self.file = file
         self.remove_old_context()
             
     def set_as_k8s_context(self):
@@ -38,8 +39,9 @@ class AwsEksManager(Manager):
 class AzureAksManager(Manager):
     """Class support Azure AKS API """
 
-    def __init__(self, rg_id: str, aks_id: str):
-        self._cmd = 'az aks get-credentials --name {} -g {}'.format(aks_id, rg_id)
+    def __init__(self, rg_id: str, aks_id: str, file: str):
+        self._cmd = 'az aks get-credentials --name {} -g {} -f {}'.format(aks_id, rg_id, file)
+        self.file = file
         self.remove_old_context()
  
     def set_as_k8s_context(self):
@@ -48,19 +50,22 @@ class AzureAksManager(Manager):
 
 def _get_api_manager():
     cluster_host = dict(inputs.get('cluster_host')).get('value')
+    file_path = inputs.get('KUBECONFIG_PATH')
     if 'amazonaws' in cluster_host.lower():
         ctx_logger.info('EKS part will be executed')
         cluster_name = dict(inputs.get('cluster_name')).get('value')
         region = dict(inputs.get('region')).get('value')
         k8smanager = AwsEksManager(cluster_name=cluster_name,
-                                   region=region)
+                                   region=region, 
+                                   file=file_path)
         ctx.instance.runtime_properties["ENV"] = 'AWS'
     elif 'azmk8s' in cluster_host.lower():
         ctx_logger.info('AZURE AKS part will be executed')
         rg_id = inputs.get('rg_id')
         aks_id = inputs.get('aks_id')
         k8smanager = AzureAksManager(rg_id=rg_id,
-                                     aks_id=aks_id)
+                                     aks_id=aks_id,
+                                     file=file_path)
         ctx.instance.runtime_properties["ENV"] = 'AZURE'
     return k8smanager
 
