@@ -23,6 +23,7 @@ def get_aws_eks_kubeconfig(region: str, eks_name: str, file: str):
 def get_azure_aks_kubeconfig(aks_id: str, rg_id: str, file: str):
     cmd = f'az aks get-credentials --name {aks_id} -g {rg_id} -f "{file}"'
     response = runner.run(cmd)
+    response = runner.run(f'cat "{file}"')
     return response.std_out
 
 
