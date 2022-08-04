@@ -11,8 +11,9 @@ inputs:
     constraints:
     - labels:
       - csys-obj-type: environment
-    # type: string
-    # default: eb830ef6-a996-4b41-ac07-125996e4983b
+  # submanager_deployment_id:
+  #   type: string
+  #   default: eb830ef6-a996-4b41-ac07-125996e4983b
 
 deployment_settings:
   default_schedules:
