@@ -217,8 +217,8 @@ node_templates:
                 KUBECONFIG: { get_attribute: [ kubeconfig_storager, capabilities, KUBECONFIG ] } 
                 MANAGER_NAME: { get_input: chart_name}
                 NAMESPACE: default
-                DEPLOY_ID: { get_sys: [deployment, id] }
-                ENV_TYPE_VALUE: { get_attribute: [ k8s_context_set, ENV ] }
+                KUBECONFIG_PATH: { concat: [ /tmp/kubecfg, { get_sys: [deployment, id] } ] }
+                ENV_TYPE_VALUE: { get_attribute: [ kubeconfig_storager, ENV ] }
                 CLUSTER_NAME_VALUE: { get_attribute: [ k8s, capabilities, kubernetes_cluster_name, value ] }
                 REGION_VALUE: { get_attribute: [ k8s, capabilities, region, value ] }
           executor: central_deployment_agent
