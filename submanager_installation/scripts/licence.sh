@@ -1,6 +1,6 @@
 #!/bin/bash
 ctx logger info "update size of deployment for path ${KUBECONFIG_PATH}"
-kubectl patch deployment ${MANAGER_NAME} -n ${NAMESPACE} -p '{"spec": {"template": { "spec": {"volumes": [{"name": "runlock", "emptyDir":{"sizeLimit":"4Gi"}}, {"name": "run", "emptyDir":{"sizeLimit":"4Gi"}}]]}}}}}' --kubeconfig "${KUBECONFIG_PATH}" 
+kubectl patch deployment ${MANAGER_NAME} -n ${NAMESPACE} -p '{"spec": {"template": { "spec": {"volumes": [{"name": "runlock", "emptyDir":{"sizeLimit":"4Gi"}}, {"name": "run", "emptyDir":{"sizeLimit":"4Gi"}}]}}}}}' --kubeconfig "${KUBECONFIG_PATH}" 
 # kubectl patch deployment ${MANAGER_NAME} -n $NAMESPACE -p '{"spec": {"template": { "spec": {"volumes": [{"name": "run", "emptyDir":{"sizeLimit":"4Gi"}}]}}}}}' --kubeconfig /etc/cloudify/.kube/config 
 kubectl set env deployment/${MANAGER_NAME} -n ${NAMESPACE} --kubeconfig "${KUBECONFIG_PATH}" --overwrite=true AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} AWS_DEFAULT_REGION=${REGION_VALUE} ENV_TYPE=${ENV_TYPE_VALUE} CLUSTER=${CLUSTER_NAME_VALUE}
 # kubectl set env deployment/${MANAGER_NAME} -n $NAMESPACE --kubeconfig ${KUBECONFIG_PATH} --overwrite=true AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
