@@ -203,6 +203,13 @@ node_templates:
                 CLUSTER_NAME_VALUE: { get_attribute: [ k8s, capabilities, kubernetes_cluster_name, value ] }
                 REGION_VALUE: { get_attribute: [ k8s, capabilities, region, value ] }
           executor: central_deployment_agent
+        delete:
+          implementation: scripts/licence.sh
+          inputs:
+            process:
+              env:
+                KUBECONFIG_PATH: { get_attribute: [ kubeconfig_storager, capabilities, KUBECONFIG_PATH] } 
+          executor: central_deployment_agent
     relationships:
       - target: host_address_generator
         type: cloudify.relationships.depends_on
