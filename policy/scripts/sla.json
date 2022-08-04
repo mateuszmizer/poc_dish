@@ -1,13 +1,9 @@
 {
-   "SLA3":{
-     "failure-domain.beta.kubernetes.io/region": "ca-central-1",
-     "feature.node.kubernetes.io/system-os_release.ID": "amzn"
-
-   },
-   "SLA2":{
+   "best-effort":{
     "feature.node.kubernetes.io/system-os_release.ID": "amzn"
    },
-   "SLA1":{
-     "kubernetes.azure.com/mode": "system"
+   "high-bandwith":{
+     "kubernetes.azure.com/mode": "system",
+     "performance_dpdk": "true"
    }
 }

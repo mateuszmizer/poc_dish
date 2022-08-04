@@ -5,11 +5,6 @@ ctx logger info "CLUSTER: $CLUSTER"
 POD_NAME=$(kubectl get pods --all-namespaces --kubeconfig /etc/cloudify/.kube/config| grep "${MANAGER_NAME}"|awk '{print $2}')
 echo $POD_NAME >> /etc/cloudify/my_log.log
 NAMESPACE=$(kubectl get pods --all-namespaces --kubeconfig /etc/cloudify/.kube/config| grep "${MANAGER_NAME}"|awk '{print $1}')
-# kubectl set env $POD_NAME -n $NAMESPACE --kubeconfig /etc/cloudify/.kube/config --overwrite=true AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID_VALUE}
-# kubectl set env $POD_NAME -n $NAMESPACE --kubeconfig /etc/cloudify/.kube/config --overwrite=true AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY_VALUE}
-# kubectl set env $POD_NAME -n $NAMESPACE --kubeconfig /etc/cloudify/.kube/config --overwrite=true AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION_VALUE}
-# kubectl set env $POD_NAME -n $NAMESPACE --kubeconfig /etc/cloudify/.kube/config --overwrite=true ENV_TYPE=${ENV_TYPE_VALUE}
-# kubectl set env $POD_NAME -n $NAMESPACE --kubeconfig /etc/cloudify/.kube/config --overwrite=true CLUSTER=${CLUSTER_VALUE}
 ctx logger info "download script to local pod $POD_NAME"
 kubectl exec -ti $POD_NAME -n $NAMESPACE --kubeconfig /etc/cloudify/.kube/config -- /bin/bash -c "curl -LO https://raw.githubusercontent.com/mateuszmizer/poc_dish/main/aws_cli_installator/scripts/aws_cli_installer.sh"
 kubectl exec -ti $POD_NAME -n $NAMESPACE --kubeconfig /etc/cloudify/.kube/config -- /bin/bash -c "sudo chmod +x aws_cli_installer.sh"

@@ -1,9 +1,10 @@
-tosca_definitions_version: cloudify_dsl_1_3
+tosca_definitions_version: cloudify_dsl_1_4
 imports:
   # - https://cloudify.co/spec/cloudify/6.3.0/types.yaml
   - https://cloudify.co/spec/cloudify/6.4.0.dev1/types.yaml
   - plugin:cloudify-kubernetes-plugin?version= >=2.13.0
   - plugin:cloudify-helm-plugin?version===0.2.6
+
 blueprint_labels:
   csys-obj-type:
     values:
@@ -55,18 +56,46 @@ inputs:
       https://kubernetes-charts.storage.googleapis.com/
     type: string
     default: https://cloudify-cosmo.github.io/cloudify-helm
-  region_name:
-    type: string
-    default: 'eu-central-1'
 
     
 node_templates:
+ 
+  kubeconfig_storager:
+    type: cloudify.nodes.ServiceComponent
+    properties:
+      resource_config:
+        blueprint:
+          main_file_name: 'blueprint.yaml'
+          external_resource: false
+          blueprint_archive: https://github.com/mateuszmizer/poc_dish/raw/main/kubeconfig_storager.zip
+        deployment:
+          inputs: 
+            k8s_deployment_id: { get_input: k8s_deployment_id }
+
+  nfd_feature:
+    type: cloudify.nodes.ServiceComponent
+    properties:
+      resource_config:
+        blueprint:
+          main_file_name: 'main.yaml'
+          external_resource: false
+          blueprint_archive: https://github.com/mateuszmizer/poc_dish/raw/main/nfd-blueprint.zip
+        deployment:
+          inputs: 
+            k8s_deployment_id: { get_input: k8s_deployment_id }
+    relationships:
+      - type: cloudify.relationships.depends_on
+        target: kubeconfig_storager
+
 
   kubernetes_deployment:
     type: cloudify.kubernetes.nodes.Master
     properties:
       configuration:
-        file_content: { get_secret: { concat:[kubeconfig__, { get_input: k8s_deployment_id }] } }   
+        file_content: { get_attribute: [ kubeconfig_storager, capabilities, KUBECONFIG ] }   
+    relationships:
+      - type: cloudify.relationships.depends_on
+        target: kubeconfig_storager
   
   k8s:
     type: cloudify.nodes.SharedResource
@@ -74,6 +103,9 @@ node_templates:
       resource_config:
         deployment:
           id: { get_input: k8s_deployment_id }
+    relationships:
+      - type: cloudify.relationships.depends_on
+        target: kubeconfig_storager
 
   helm_install:
     type: cloudify.nodes.helm.Binary
@@ -83,6 +115,8 @@ node_templates:
     relationships:
       - target: kubernetes_deployment
         type: cloudify.relationships.depends_on
+      - type: cloudify.relationships.depends_on
+        target: kubeconfig_storager
 
   repo:
     type: cloudify.nodes.helm.Repo
@@ -99,11 +133,11 @@ node_templates:
     properties:
       client_config:
         configuration:
-          file_content: { get_secret: { concat:[kubeconfig__, { get_input: k8s_deployment_id }] } }
+          file_content: { get_attribute: [ kubeconfig_storager, capabilities, KUBECONFIG ] } 
         authentication:
           aws_access_key_id: { get_secret: aws_access_key_id }
           aws_secret_access_key: { get_secret: aws_secret_access_key }
-          aws_default_region: { get_input: region_name }
+          aws_default_region: eu-central-1
       resource_config:
         name: "cloudify-manager-aio"
         chart: { concat: [ { get_input: repo_name },'/', { get_input: chart_name } ] }
@@ -125,7 +159,7 @@ node_templates:
       validate_resource_status: true
       client_config:
         configuration:
-          file_content: { get_secret: { concat:[kubeconfig__, { get_input: k8s_deployment_id }] } }  
+          file_content: { get_attribute: [ kubeconfig_storager, capabilities, KUBECONFIG ] }   
       definition:
         apiVersion: v1
         kind: Service
@@ -148,24 +182,24 @@ node_templates:
       - target: k8s_service
         type: cloudify.relationships.depends_on
 
-  k8s_context_set:
-    type: cloudify.nodes.Root
-    interfaces:
-      cloudify.interfaces.lifecycle:
-        start:
-          implementation: scripts/set_k8s_context.py
-          executor: central_deployment_agent
-          inputs:
-            cluster_host: { get_attribute: [ k8s, capabilities, kubernetes_cluster_host ] }
-            cluster_name: { get_attribute: [ k8s, capabilities, kubernetes_cluster_name ] }
-            region: { get_attribute: [ k8s, capabilities, region ] }
-            rg_id: { get_attribute: [ k8s, capabilities, rg_id ] }
-            aks_id: { get_attribute: [ k8s, capabilities, aks_id ] }
-    relationships:
-    - target: k8s
-      type: cloudify.relationships.depends_on
-    - target: host_address_generator
-      type: cloudify.relationships.depends_on
+  # k8s_context_set:
+  #   type: cloudify.nodes.Root
+  #   interfaces:
+  #     cloudify.interfaces.lifecycle:
+  #       start:
+  #         implementation: scripts/set_k8s_context.py
+  #         executor: central_deployment_agent
+  #         inputs:
+  #           cluster_host: { get_attribute: [ k8s, capabilities, kubernetes_cluster_host ] }
+  #           cluster_name: { get_attribute: [ k8s, capabilities, kubernetes_cluster_name ] }
+  #           region: { get_attribute: [ k8s, capabilities, region ] }
+  #           rg_id: { get_attribute: [ k8s, capabilities, rg_id ] }
+  #           aks_id: { get_attribute: [ k8s, capabilities, aks_id ] }
+  #   relationships:
+  #   - target: k8s
+  #     type: cloudify.relationships.depends_on
+  #   - target: host_address_generator
+  #     type: cloudify.relationships.depends_on
 
   licence:
     type: cloudify.nodes.Root
@@ -180,16 +214,19 @@ node_templates:
                 ADMIN_PASSWORD: admin
                 AWS_ACCESS_KEY_ID: { get_secret: aws_access_key_id }
                 AWS_SECRET_ACCESS_KEY: { get_secret: aws_secret_access_key }
-                KUBECONFIG: { get_secret: { concat:[kubeconfig__, { get_input: k8s_deployment_id }] } }
+                KUBECONFIG: { get_attribute: [ kubeconfig_storager, capabilities, KUBECONFIG ] } 
                 MANAGER_NAME: { get_input: chart_name}
                 NAMESPACE: default
+                DEPLOY_ID: { get_sys: [deployment, id] }
                 ENV_TYPE_VALUE: { get_attribute: [ k8s_context_set, ENV ] }
                 CLUSTER_NAME_VALUE: { get_attribute: [ k8s, capabilities, kubernetes_cluster_name, value ] }
                 REGION_VALUE: { get_attribute: [ k8s, capabilities, region, value ] }
           executor: central_deployment_agent
     relationships:
-      - target: k8s_context_set
+      - target: host_address_generator
         type: cloudify.relationships.depends_on
+      # - target: k8s_context_set
+      #   type: cloudify.relationships.depends_on
   
   aws_cli_installator:
     type: cloudify.nodes.Component
@@ -209,6 +246,8 @@ node_templates:
     relationships:
     - type: cloudify.relationships.depends_on
       target: k8s
+    - type: cloudify.relationships.depends_on
+      target: licence
 
   policy_matcher:
     type: cloudify.nodes.Component
