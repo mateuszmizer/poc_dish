@@ -65,75 +65,26 @@ node_templates:
       - type: cloudify.relationships.depends_on
         target: kubeconfig_storager
 
-  aws_cli_installator:
-    type: cloudify.nodes.Component
-    properties:
-      resource_config:
-        blueprint:
-          main_file_name: 'aws_cli.yaml'
-          external_resource: false
-          blueprint_archive: https://github.com/mateuszmizer/poc_dish/raw/main/aws_cli_installator.zip
-        deployment:
-          inputs:
-            cluster_host: { get_attribute: [ k8s, capabilities, kubernetes_cluster_host, value ] }
-            cluster_name: { get_attribute: [ k8s, capabilities, kubernetes_cluster_name, value ] }
-            region: { get_attribute: [ k8s, capabilities, region, value ] }
-            rg_id: { get_attribute: [ k8s, capabilities, rg_id ] }
-            aks_id: { get_attribute: [ k8s, capabilities, aks_id] }
-    relationships:
-    - type: cloudify.relationships.depends_on
-      target: submanager
-    - type: cloudify.relationships.depends_on
-      target: k8s
-
-  policy_matcher:
-    type: cloudify.nodes.Component
-    properties:
-      client:
-        host: { get_attribute: [ submanager, capabilities, cloudify_manager_endpoint ] }
-        username: admin
-        password: admin
-        tenant: default_tenant
-        port: 80
-        protocol: 'http'
-      resource_config:
-        blueprint:
-          main_file_name: 'policy.yaml'
-          external_resource: false
-          blueprint_archive: https://github.com/mateuszmizer/poc_dish/raw/main/policy.zip
-        deployment:
-          inputs:
-            cluster_host: { get_attribute: [ k8s, capabilities, kubernetes_cluster_host ] }
-            cluster_name: { get_attribute: [ k8s, capabilities, kubernetes_cluster_name ] }
-            region: { get_attribute: [ k8s, capabilities, region ] }
-            rg_id: { get_attribute: [ k8s, capabilities, rg_id ] }
-            aks_id: { get_attribute: [ k8s, capabilities, aks_id ] }
-            # deployment_id: { get_input: submanager_deployment_id }
-    relationships:
-    - type: cloudify.relationships.depends_on
-      target: aws_cli_installator
-    - type: cloudify.relationships.depends_on
-      target: nfd_feature
-  
-  labeler:
-    type: cloudify.nodes.Root
-    interfaces:
-      cloudify.interfaces.lifecycle:
-        start:
-          implementation: scripts/labeler.py
-          executor: central_deployment_agent
-          inputs:
-            deployment_id: { get_attribute: [submanager, node_instance_id] }  #{ get_input: submanager_deployment_id } #TODO 
-            SLA_VALUE: { get_attribute: [ policy_matcher, capabilities, SLA_POLICY ] }
-    relationships:
-    - type: cloudify.relationships.depends_on
-      target: policy_matcher
+  # policy_executor:
+  #   type: cloudify.nodes.Component
+  #   properties:
+  #     resource_config:
+  #       blueprint:
+  #         main_file_name: 'helm_manager_aio.yaml'
+  #         external_resource: false
+  #         blueprint_archive: https://github.com/mateuszmizer/poc_dish/raw/main/submanager_helm_aio.zip
+  #       deployment:
+  #         inputs:
+  #           submanager_deployment_id: { get_attribute: [submanager, node_instance_id] } 
+  #   relationships:
+  #     - type: cloudify.relationships.depends_on
+  #       target: submanager
 
 capabilities:
   cloudify_manager_endpoint:
     value: { get_attribute: [ submanager, capabilities, cloudify_manager_endpoint ] }
-  SLA:
-    value: { get_attribute: [ policy_matcher, capabilities, SLA_POLICY ] }
   SUBMANAGER_ID:
-    value: { get_attribute: [submanager, node_instance_id] } 
+    value: { get_attribute: [submanager, node_instance_id] }
+  # SLA:
+  #   value: { get_attribute: [ policy_matcher, capabilities, SLA_POLICY ] }
   
