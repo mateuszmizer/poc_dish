@@ -13,8 +13,10 @@ runner = cloudify_utils.LocalCommandRunner(ctx_logger)
 
 
 def get_aws_eks_kubeconfig(region: str, eks_name: str, file: str):
-    cmd = f'aws eks update-kubeconfig --region {region} --name {eks_name} --dry-run| tee "{file}"'
-    response = runner.run(command=[f'aws', 'eks update-kubeconfig --region {region} --name {eks_name} --dry-run | tee "{file}"'])
+    cmd = f'aws eks update-kubeconfig --region {region} --name {eks_name} --dry-run'
+    cmd2 = f'aws eks update-kubeconfig --region {region} --name {eks_name} --kubeconfig {file}'
+    response = runner.run(cmd)
+    runner.run(cmd2)
     return response.std_out.replace('client.authentication.k8s.io/v1beta1', 'client.authentication.k8s.io/v1alpha1')  # WA for helm issue
 
 

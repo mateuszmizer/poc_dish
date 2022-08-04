@@ -2,7 +2,7 @@ tosca_definitions_version: cloudify_dsl_1_4
 
 imports:
   - https://cloudify.co/spec/cloudify/6.4.0.dev1/types.yaml
-  - plugin:cloudify-kubernetes-plugin?version= >=2.13.0
+  - plugin:cloudify-kubernetes-plugin?version===2.13.9
 
 inputs:
 
@@ -56,7 +56,7 @@ node_templates:
           external_resource: false
           blueprint_archive: https://github.com/mateuszmizer/poc_dish/raw/main/submanager_helm_aio.zip
         deployment:
-          id: { get_input: submanager_name }
+          id: {get_input: submanager_name }
           inputs:
             k8s_deployment_id: { get_input: k8s_deployment_id }
     relationships:
