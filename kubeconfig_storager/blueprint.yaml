@@ -11,7 +11,7 @@ inputs:
   
   KUBECONFIG_PATH:
     type: string
-    default: /etc/cloudify/.kube/config
+    default: /etc/cloudify/.kube/config_test
 
 node_templates:
 
@@ -54,3 +54,5 @@ node_templates:
 capabilities:
   KUBECONFIG:
     value: { get_attribute: [ config_generator, kubeconfig ] }
+  KUBECONFIG_PATH:
+    value: { get_input: KUBECONFIG_PATH }
