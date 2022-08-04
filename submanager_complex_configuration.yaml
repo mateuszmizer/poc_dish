@@ -13,16 +13,13 @@ inputs:
       - csys-obj-type: service
       - obj-type: terraform
 
+  submanager_name:
+    type: string
+    default: cloudify-manager-aio
+
 
 node_templates:
   
-  k8s:
-    type: cloudify.nodes.SharedResource
-    properties:
-      resource_config:
-        deployment:
-          id: { get_input: k8s_deployment_id }
-
   kubeconfig_storager:
     type: cloudify.nodes.ServiceComponent
     properties:
@@ -59,6 +56,7 @@ node_templates:
           external_resource: false
           blueprint_archive: https://github.com/mateuszmizer/poc_dish/raw/main/submanager_helm_aio.zip
         deployment:
+          id: { get_input: submanager_name }
           inputs:
             k8s_deployment_id: { get_input: k8s_deployment_id }
     relationships:
