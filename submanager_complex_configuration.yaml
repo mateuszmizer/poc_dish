@@ -10,17 +10,9 @@ inputs:
     type: deployment_id
     constraints:
     - labels:
-      - csys-obj-type: environment
+      - csys-obj-type: service
+      - obj-type: terraform
 
-# imports:
-#   - https://cloudify.co/spec/cloudify/6.3.0/types.yaml
-#   - plugin:cloudify-kubernetes-plugin?version===2.13.9
-
-# inputs:
-
-#   k8s_deployment_id:
-#     type: string
-#     default: 85cbb865-19f3-43b7-9f63-ed12b849d381
 
 node_templates:
   
@@ -29,7 +21,7 @@ node_templates:
     properties:
       resource_config:
         deployment:
-          id: { get_attribute: k8s_deployment_id }
+          id: { get_input: k8s_deployment_id }
 
   kubeconfig_storager:
     type: cloudify.nodes.ServiceComponent
@@ -131,12 +123,17 @@ node_templates:
           implementation: scripts/labeler.py
           executor: central_deployment_agent
           inputs:
-            deployment_id: { get_input: submanager_deployment_id }
+            deployment_id: { get_attribute: [submanager, node_instance_id] }  #{ get_input: submanager_deployment_id } #TODO 
             SLA_VALUE: { get_attribute: [ policy_matcher, capabilities, SLA_POLICY ] }
     relationships:
     - type: cloudify.relationships.depends_on
       target: policy_matcher
 
 capabilities:
+  cloudify_manager_endpoint:
+    value: { get_attribute: [ submanager, capabilities, cloudify_manager_endpoint ] }
   SLA:
     value: { get_attribute: [ policy_matcher, capabilities, SLA_POLICY ] }
+  SUBMANAGER_ID:
+    value: { get_attribute: [submanager, node_instance_id] } 
+  
