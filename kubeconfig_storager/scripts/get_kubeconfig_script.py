@@ -20,11 +20,8 @@ def get_aws_eks_kubeconfig(region: str, eks_name: str, file: str):
 
 
 def get_azure_aks_kubeconfig(aks_id: str, rg_id: str, file: str):
-    tmp_file_name = '/etc/cloudify/config_temp'
-    cmd = f'az aks get-credentials --name {aks_id} -g {rg_id} -f {tmp_file_name}'
-    runner.run(cmd)
-    response = runner.run(f'cat {tmp_file_name}')
-    runner.run(f'rm -rf {tmp_file_name}')
+    cmd = f'az aks get-credentials --name {aks_id} -g {rg_id} -f {file}'
+    response = runner.run(cmd)
     return response.std_out
 
 
@@ -36,13 +33,13 @@ if __name__=='__main__':
         ctx_logger.info('EKS part will be executed')
         cluster_name = dict(inputs.get('cluster_name')).get('value')
         region = dict(inputs.get('region')).get('value')
-        config = get_aws_eks_kubeconfig(region=region, eks_name=cluster_name)
+        config = get_aws_eks_kubeconfig(region=region, eks_name=cluster_name, file=file)
         ctx.instance.runtime_properties["ENV"] = 'AWS'
     elif 'azmk8s' in cluster_host.lower():
         ctx_logger.info('AZURE AKS part will be executed')
         rg_id = inputs.get('rg_id')
         aks_id = inputs.get('aks_id')
-        config = get_azure_aks_kubeconfig(aks_id=aks_id, rg_id=rg_id)
+        config = get_azure_aks_kubeconfig(aks_id=aks_id, rg_id=rg_id, file=file)
         ctx.instance.runtime_properties["ENV"] = 'AZURE'
     ctx.instance.runtime_properties["kubeconfig"] = config
     ctx.instance.runtime_properties["KUBECONFIG_PATH"] = file
