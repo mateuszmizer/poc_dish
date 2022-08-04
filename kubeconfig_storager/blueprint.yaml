@@ -8,6 +8,10 @@ inputs:
   k8s_deployment_id:
     type: string
     default: 85cbb865-19f3-43b7-9f63-ed12b849d381
+  
+  KUBECONFIG_PATH:
+    type: string
+    default: /etc/cloudify/.kube/config
 
 node_templates:
 
@@ -32,6 +36,7 @@ node_templates:
             rg_id: { get_attribute: [ k8s, capabilities, rg_id ] }
             aks_id: { get_attribute: [ k8s, capabilities, aks_id ] }
             deployment_id: { get_input:  k8s_deployment_id }
+            KUBECONFIG_PATH: { get_input: KUBECONFIG_PATH }
     relationships:
     - type: cloudify.relationships.depends_on
       target: k8s
