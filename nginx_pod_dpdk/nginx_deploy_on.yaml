@@ -20,7 +20,7 @@ node_templates:
         apiVersion: v1
         kind: Pod
         metadata:
-          name: nginx_dpdk
+          name: nginxdpdk
         spec:
           containers:
           - name: nginxcontainer
