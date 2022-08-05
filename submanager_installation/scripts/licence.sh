@@ -21,7 +21,7 @@ cfy license upload /licence.yaml
 ctx logger info "licence installed successfully"
 cfy secrets create aws_access_key_id -s ${AWS_ACCESS_KEY_ID}
 cfy secrets create aws_secret_access_key -s ${AWS_SECRET_ACCESS_KEY}
-cfy secrets create kubeconfig -s """$(cat ${KUBECONFIG})"""
+cfy secrets create kubeconfig -s """$(cat ${KUBECONFIG_PATH})"""
 # rm -rf ${KUBECONFIG_PATH}
 #PART FOR CLI INSTALLATION
 ctx logger info "set aws creds for ${MANAGER_NAME}"

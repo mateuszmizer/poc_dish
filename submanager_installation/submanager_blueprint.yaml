@@ -204,7 +204,7 @@ node_templates:
                 REGION_VALUE: { get_attribute: [ k8s, capabilities, region, value ] }
           executor: central_deployment_agent
         delete:
-          implementation: scripts/licence.sh
+          implementation: scripts/delete.sh
           inputs:
             process:
               env:
