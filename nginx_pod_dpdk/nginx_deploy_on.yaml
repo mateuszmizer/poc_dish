@@ -28,7 +28,7 @@ node_templates:
             ports:
             - containerPort: 80
           nodeSelector:
-            performance_dpdk: true
+            performance_dpdk: "true"
             
     relationships:
       - type: cloudify.kubernetes.relationships.managed_by_master
