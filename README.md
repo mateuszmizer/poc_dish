@@ -3,7 +3,11 @@
 PRECONDITIONS
 
 EKS/AKS Enviroment
-Azure and AWS CLI installed on MAIN MANAGER
+Main manager has installed and configured: aws-cli, kubectl and azure-cli
+
+All below steps can by executed by submanager_installation.zip package
+________________________________________________________________________________________________________
+
 STEPS:
 1. Store kubeconfigs as secrets 
 use:
