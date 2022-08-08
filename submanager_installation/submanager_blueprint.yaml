@@ -213,6 +213,8 @@ node_templates:
     relationships:
       - target: host_address_generator
         type: cloudify.relationships.depends_on
+      - target: k8s
+        type: cloudify.relationships.depends_on
 
   policy_matcher:
     type: cloudify.nodes.Component
@@ -259,7 +261,5 @@ capabilities:
     value: { get_attribute: [host_address_generator, HOST_ADDR] }
   related_kubernetes_deployment_id:
     value: { get_input: k8s_deployment_id }
-  submanager_id:
-    value: { get_sys: [deployment, id] }
   kubeconfig_submanager_path:
     value: { get_attribute: [ kubeconfig_storager, capabilities, KUBECONFIG_PATH] } 
