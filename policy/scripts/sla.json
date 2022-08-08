@@ -3,7 +3,10 @@
     "feature.node.kubernetes.io/system-os_release.ID": "amzn"
    },
    "high-bandwith":{
-     "kubernetes.azure.com/mode": "system",
-     "performance_dpdk": "true"
-   }
+     "kubernetes.azure.com/mode": "system"
+   },
+   "high-bandwith-dpdk":{
+    "kubernetes.azure.com/mode": "system",
+    "performance_dpdk": "true"
+  }
 }

@@ -43,4 +43,4 @@ if __name__=='__main__':
     deployment_id = inputs.get('deployment_id')
     sla_labels = [{'SLA_POLICY': inputs.get('SLA_VALUE')}]
     ctx_logger.info(f'SLA: {sla_labels}')
-    Labeler().update_deployment_labels(deployment_id=deployment_id, labels=sla_labels)
+    Labeler().update_deployment_labels(deployment_id=deployment_id, labels=sla_labels.split(','))
