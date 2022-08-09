@@ -3,42 +3,26 @@ tosca_definitions_version: cloudify_dsl_1_3
 imports:
   - https://cloudify.co/spec/cloudify/6.3.0/types.yaml
   - plugin:cloudify-azure-plugin
+  - plugin:cloudify-utilities-plugin?version= >=1.25.0
 
 inputs:
-
-  subscription-id-secret:
-    type: string
-    required: false
-    default: azure_subscription_id
-
-  tenant-id-secret:
-    type: string
-    required: false
-    default: azure_tenant_id
-
-  client-id-secret:
-    type: string
-    required: false
-    default: azure_client_id
-
-  client-secret-secret:
-    type: string
-    required: false
-    default: azure_client_secret
-
   resource_group_name:
     type: string
 
   managed_cluster_name:
     type: string
 
-dsl_definitions:
+labels:
+  potential:
+    values:
+     - submanager
 
+dsl_definitions:
   azure_config: &azure_config
-    subscription_id:  { get_secret: { get_input: subscription-id-secret } }
-    tenant_id: { get_secret: { get_input: tenant-id-secret } }
-    client_id: { get_secret: { get_input: client-id-secret } }
-    client_secret: { get_secret: { get_input: client-secret-secret } }
+    subscription_id: { get_secret: azure_subscription_id }
+    tenant_id: { get_secret: azure_tenant_id }
+    client_id: { get_secret: azure_client_id }
+    client_secret: { get_secret: azure_client_secret }
 
 node_templates:
 
@@ -49,6 +33,7 @@ node_templates:
       resource_group: { get_input: resource_group_name }
       name: { get_input: managed_cluster_name }
       azure_config: *azure_config
+      client_config: *azure_config
       store_kube_config_in_runtime: true
 
 capabilities:
@@ -64,3 +49,13 @@ capabilities:
 
   connection_details:
     value: *kubernetes_master_configuration
+    
+  kubernetes_cluster_host:
+    value: { get_attribute: [managed_cluster, kubeconf, clusters, 0, cluster, server ] }
+  
+  aks_id:
+    value: { get_input: managed_cluster_name }
+    
+  
+  rg_id:
+    value: { get_input: resource_group_name }

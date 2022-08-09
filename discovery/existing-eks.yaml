@@ -4,6 +4,11 @@ imports:
   - https://cloudify.co/spec/cloudify/6.3.0/types.yaml
   - plugin:cloudify-aws-plugin
 
+labels:
+  potential:
+    values:
+     - submanager
+
 inputs:
 
   aws-access-key-id-secret:
