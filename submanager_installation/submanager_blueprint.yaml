@@ -33,8 +33,7 @@ inputs:
     type: deployment_id
     constraints:
     - labels:
-      - csys-obj-type: service
-      - obj-type: terraform
+      - potential: submanager
 
   repo_name:
     description: >

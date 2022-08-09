@@ -29,7 +29,10 @@ def get_azure_aks_kubeconfig(aks_id: str, rg_id: str, file: str):
 
 if __name__=='__main__':
     deployment_id = inputs.get('deployment_id')
-    cluster_host = dict(inputs.get('cluster_host')).get('value')
+    try:
+        cluster_host = dict(inputs.get('cluster_host')).get('value')
+    except ValueError:
+        cluster_host = inputs.get('cluster_host')
     file = inputs.get("KUBECONFIG_PATH")
     if 'amazonaws' in cluster_host.lower():
         ctx_logger.info('EKS part will be executed')
