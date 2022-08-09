@@ -138,8 +138,12 @@ def _get_api_manager():
 
 
 if __name__=='__main__':
+    """
+        match policy from sla.json, 
+        if not match, standard_policy value will be returned
+    """
+    standard_policy = "best-effort"
     sla_values = []
-    # deployment_id = inputs.get('deployment_id')
     k8smanager = _get_api_manager()
     policy_matcher = PolicySLAMatcher()
     data = k8smanager.get_nodes_labels()
@@ -149,5 +153,5 @@ if __name__=='__main__':
         sla_values += [k for k in sla_value if k not in sla_values]
         for i, l in enumerate(sla_value):
             ctx.instance.runtime_properties[f"{k['metadata']['name']}{i}"] = l
-    ctx.instance.runtime_properties["SLA_POLICY"] = sla_values[-1]
-    # policy_matcher.update_deployment_labels(deployment_id=deployment_id, labels=[{'SLA_POLICY': s} for s in sla_values])
+    policy_value = sla_values[-1] if sla_values else standard_policy
+    ctx.instance.runtime_properties["SLA_POLICY"] = policy_value
