@@ -36,8 +36,12 @@ if __name__=='__main__':
     file = inputs.get("KUBECONFIG_PATH")
     if 'amazonaws' in cluster_host.lower():
         ctx_logger.info('EKS part will be executed')
-        cluster_name = dict(inputs.get('cluster_name')).get('value')
-        region = dict(inputs.get('region')).get('value')
+        try:
+            cluster_name = dict(inputs.get('cluster_name')).get('value')
+            region = dict(inputs.get('region')).get('value')   
+        except ValueError:
+            cluster_name = inputs.get('cluster_name')
+            region = inputs.get('region')
         config = get_aws_eks_kubeconfig(region=region, eks_name=cluster_name, file=file)
         ctx.instance.runtime_properties["ENV"] = 'AWS'
     elif 'azmk8s' in cluster_host.lower():
