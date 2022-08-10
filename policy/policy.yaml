@@ -20,6 +20,16 @@ inputs:
   aks_id:
     type: string
 
+deployment_settings:
+  default_schedules:
+    refresh:
+      workflow: execute_operation
+      since: '+15min'
+      recurrence: '15min'
+      workflow_parameters:
+        operation: cloudify.interfaces.lifecycle.start
+        node_ids: [policy_temp]
+
 node_templates:
 
   policy_temp:
