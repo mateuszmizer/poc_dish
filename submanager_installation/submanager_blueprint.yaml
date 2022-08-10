@@ -21,11 +21,18 @@ deployment_settings:
   default_schedules:
     refresh:
       workflow: execute_operation
-      since: '+15min'
-      recurrence: '15min'
+      since: '+14min'
+      recurrence: '10min'
       workflow_parameters:
         operation: cloudify.interfaces.lifecycle.start
-        node_ids: [policy_matcher, labeler]
+        node_ids: [policy_matcher]
+    refresh_label:
+      workflow: execute_operation
+      since: '+15min'
+      recurrence: '10min'
+      workflow_parameters:
+        operation: cloudify.interfaces.lifecycle.start
+        node_ids: [labeler]
 
 inputs:
 
