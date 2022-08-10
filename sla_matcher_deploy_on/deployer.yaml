@@ -36,3 +36,5 @@ node_templates:
           main_file_name: { get_input: main_file_name }
           external_resource: false
           blueprint_archive: { get_input: blueprint_archive }
+        deployment:
+          id: { get_input: blueprint_id }
