@@ -21,15 +21,15 @@ deployment_settings:
   default_schedules:
     refresh:
       workflow: execute_operation
-      since: '+14min'
-      recurrence: '10min'
+      since: '+1min'
+      recurrence: '2min'
       workflow_parameters:
         operation: cloudify.interfaces.lifecycle.start
         node_ids: [policy_matcher]
     refresh_label:
       workflow: execute_operation
-      since: '+15min'
-      recurrence: '10min'
+      since: '+2min'
+      recurrence: '2min'
       workflow_parameters:
         operation: cloudify.interfaces.lifecycle.start
         node_ids: [labeler]
@@ -77,7 +77,7 @@ node_templates:
         deployment:
           inputs: 
             k8s_deployment_id: { get_input: k8s_deployment_id }
-            KUBECONFIG_PATH: { concat: [ /tmp/.kube/k8scfg, { get_sys: [deployment, id] } ] }
+            KUBECONFIG_PATH: { concat: [ /opt/manager/resources/deployments/, { get_sys: [tenant, name] }, /, { get_sys: [deployment, id] } ], /kubeconfig }
 
   nfd_feature:
     type: cloudify.nodes.ServiceComponent
