@@ -1,6 +1,0 @@
-{
-   "high-bandwith":{
-    "kubernetes.azure.com/mode": "system",
-    "performance_dpdk": "true"
-  }
-}
